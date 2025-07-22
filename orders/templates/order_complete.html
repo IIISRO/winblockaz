@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+  <div class="card mx-auto" style="max-width: 700px;">
+    <div class="card-header bg-primary text-white">
+      <h3 class="mb-0">Sifariş çeki</h3>
+      <small class="text-dark font-weight-medium mt-3 d-block" style="font-size: 18px;">Alışınız üçün təşəkkür edirik!</small>
+    </div>
+    <div class="card-body">
+      <p><strong>Sifariş nömrəsi:</strong> {{ summary.order_number }}</p>
+      <p><strong>Ad:</strong> {{ summary.full_name }}</p>
+      <p><strong>Ünvan:</strong> {{ summary.address }}, {{ summary.city }}</p>
+      <p><strong>Telefon:</strong> {{ summary.phone }}</p>
+      <hr>
+      <h5>Sifariş detalları:</h5>
+      <table class="table table-warning">
+        <thead>
+          <tr>
+            <th>Məhsul</th>
+            <th>Miqdar</th>
+            <th>Qiymət (₼)</th>
+            <th>Cəmi (₼)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in summary.products %}
+          <tr>
+            <td>{{ item.product_title }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.price }}</td>
+            <td>{{ item.total_price }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4">Məhsul tapılmadı.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="text-right">
+        <h6 style="font-weight: normal;">Ara cəm: {{ summary.subtotal }} ₼</h6>
+        <h6 style="font-weight: normal;">Çatdırılma: {{ summary.shipping }} ₼</h6>
+        <h4>Ümumi məbləğ: {{ summary.total }} ₼</h4>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

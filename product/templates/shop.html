@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <div class="col-12">
+            <nav class="breadcrumb bg-light mb-30">
+                <a class="breadcrumb-item text-dark" href="#">Ana səhifə</a>
+                <a class="breadcrumb-item text-dark" href="#">Mağaza</a>
+                <span class="breadcrumb-item active">Məhsullar siyahısı</span>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row px-xl-5">
+
+        <div class="col-lg-12 col-md-12">
+            <div class="row pb-3">
+                <div class="col-12 pb-1">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div>
+                            <button class="btn btn-sm btn-light"><i class="fa fa-th-large"></i></button>
+                        </div>
+                        <div class="ml-2">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-sm btn-light dropdown-toggle"
+                                    data-toggle="dropdown">
+                                    {% if current_sort == 'latest' %}
+                                    Ən yenilər
+                                    {% elif current_sort == 'price_low' %}
+                                    Qiymət: artan sıra ilə
+                                    {% elif current_sort == 'price_high' %}
+                                    Qiymət: azalan sıra ilə
+                                    {% elif current_sort == 'title' %}
+                                    Əlifba sırası ilə
+                                    {% else %}
+                                    Sıralama
+                                    {% endif %}
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="?sort=latest">Ən yenilər</a>
+                                    <a class="dropdown-item" href="?sort=price_low">Qiymət: artan sıra ilə</a>
+                                    <a class="dropdown-item" href="?sort=price_high">Qiymət: azalan sıra ilə</a>
+                                    <a class="dropdown-item" href="?sort=title">Əlifba sırası ilə</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% for product in products %}
+                <div class="col-lg-3 col-md-4 col-sm-4 pb-1">
+                    <div class="product-item bg-light mb-4">
+                        <div class="product-img position-relative overflow-hidden">
+                            <img class="img-fluid w-100" src="{{ product.image.url }}" alt="">
+                            <div class="product-action">
+                                {% if user.is_authenticated %}
+                                <button onclick="addBasket('{{product.id}}')" class="btn btn-outline-dark btn-square">
+                                    <i class="fa fa-shopping-cart"></i>
+                                </button>
+                                {% else %}
+                                <a class="btn btn-outline-dark btn-square" href="{% url 'account:login' %}">
+                                    <i class="fa fa-shopping-cart"></i>
+                                </a>
+                                {% endif %}
+                                <a class="btn btn-outline-dark btn-square" href="{{product.get_absolute_url}}">
+                                    <i class="fa fa-search"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="text-center py-4">
+                            {{ product.title }}
+                            <div class="d-flex align-items-center justify-content-center mt-2">
+                                <h5>{{ product.price }} ₼</h5>
+                                <h6 class="text-muted ml-2"></h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    function addBasket(prodID) {
+        const url = "{% url 'account:addbasket' prodid=0 colorid=1 gridid=1 %}".replace('0', prodID);
+
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({})
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    location.reload();
+                } else {
+                    alert("Xəta: " + data.message);
+                }
+            });
+    }
+</script>
+{% endblock %}

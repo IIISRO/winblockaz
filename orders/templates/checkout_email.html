@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 5px;
+    }
+
+    h2 {
+      color: #2c3e50;
+      font-size: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #3498db;
+      color: white;
+    }
+
+    .total {
+      font-weight: bold;
+    }
+
+    .footer {
+      margin-top: 30px;
+      font-size: 12px;
+      color: #888;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Sifariş Qəbzi</h2>
+    <p style="font-size: 18px;">Sifarişiniz üçün təşəkkür edirik!</p>
+    <p><strong>Sifariş nömrəsi:</strong> {{ order_number }}</p>
+    <p><strong>Ad:</strong> {{ full_name }}</p>
+    <p><strong>Ünvan:</strong> {{ address }}, {{ city }}</p>
+    <p><strong>Telefon:</strong> {{ phone }}</p>
+
+    <h3>Sifariş detalları:</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Məhsul</th>
+          <th>Miqdar</th>
+          <th>Qiymət (₼)</th>
+          <th>Cəmi (₼)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in products %}
+        <tr>
+          <td>{{ item.product.title }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.product.price }}</td>
+          <td>{{ item.total_price }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <p class="total">Ara cəm: {{ subtotal }} ₼</p>
+    <p class="total">Çatdırılma: {{ shipping }} ₼</p>
+    <p class="total">Ümumi məbləğ: {{ total }} ₼</p>
+
+    <p>Əgər suallarınız varsa, bizimlə əlaqə saxlamaqdan çəkinməyin.</p>
+    <div class="footer">© {{ current_year }} Şirkətiniz. Bütün hüquqlar qorunur.</div>
+  </div>
+</body>
+
+</html>

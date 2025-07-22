@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4">Sifarişin rəsmiləşdirilməsi</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Ödəmə məlumatları</h4>
+                <div class="form-group">
+                    <label>Ad, Soyad</label>
+                    <input type="text" name="full_name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Ünvan</label>
+                    <input type="text" name="address" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Şəhər</label>
+                    <input type="text" name="city" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Telefon</label>
+                    <input type="text" name="phone" class="form-control" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h4>Sizin sifariş</h4>
+                <ul class="list-group mb-3">
+                    {% for item in products %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <div>
+                            <h6 class="my-0">{{ item.product.title }}</h6>
+                            <small class="text-muted">Miqdar: {{ item.quantity }}</small>
+                        </div>
+                        <span class="text-muted">{{ item.total_price }} ₼</span>
+                    </li>
+                    {% endfor %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Cəmi ara məbləğ</span>
+                        <strong>{{ subtotal }} ₼</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Çatdırılma</span>
+                        <strong>{{ shipping }} ₼</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Ümumi məbləğ</span>
+                        <strong>{{ total }} ₼</strong>
+                    </li>
+                </ul>
+                <button type="submit" class="btn btn-primary btn-block">Sifarişi təsdiqlə</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

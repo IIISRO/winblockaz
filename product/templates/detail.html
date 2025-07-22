@@ -1,0 +1,270 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <div class="col-12">
+            <nav class="breadcrumb bg-light mb-30">
+                <a class="breadcrumb-item text-dark" href="#">Ana səhifə</a>
+                <a class="breadcrumb-item text-dark" href="#">Mağaza</a>
+                <span class="breadcrumb-item active">{{product.title}}</span>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid pb-5">
+    <div class="row px-xl-5">
+        <div class="col-lg-5 mb-30">
+            <div id="product-carousel" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner bg-light">
+                    <div class="carousel-item active">
+                        <img class="w-100 h-100" src="{{product.image.url}}" alt="Şəkil">
+                    </div>
+                </div>
+                <a class="carousel-control-prev" href="#product-carousel" data-slide="prev">
+                    <i class="fa fa-2x fa-angle-left text-dark"></i>
+                </a>
+                <a class="carousel-control-next" href="#product-carousel" data-slide="next">
+                    <i class="fa fa-2x fa-angle-right text-dark"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-lg-7 h-auto mb-30">
+            <div class="h-100 bg-light p-30">
+                <h3>{{product.title}}</h3>
+                <h3 class="font-weight-semi-bold mb-4">{{product.price}} ₼</h3>
+                <p class="mb-4">{{product.detail}}</p>
+
+                {% if colors %}
+                <div class="d-flex mb-4">
+                    <strong class="text-dark mr-3">Rənglər:</strong>
+                    <form>
+                        {% for color in colors %}
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" class="custom-control-input" id="color-{{ color.id }}" name="color"
+                                value="{{ color.id }}">
+                            <label class="custom-control-label" for="color-{{ color.id }}">{{ color.title }}</label>
+                        </div>
+                        {% endfor %}
+                    </form>
+                </div>
+                {% endif %}
+
+                {% if grids %}
+                <div class="d-flex mb-4">
+                    <strong class="text-dark mr-3">Ölçülər:</strong>
+                    <form>
+                        {% for grid in grids %}
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" class="custom-control-input" id="grid-{{ grid.id }}" name="grid"
+                                value="{{ grid.id }}">
+                            <label class="custom-control-label" for="grid-{{ grid.id }}">{{ grid.title }}</label>
+                        </div>
+                        {% endfor %}
+                    </form>
+                </div>
+                {% endif %}
+
+                <div class="d-flex align-items-center mb-4 pt-2">
+                    <div class="input-group quantity mr-3" style="width: 130px;">
+                        <div class="input-group-btn">
+                            <button class="btn btn-primary btn-minus">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                        <input type="text" id="quantity-input" class="form-control bg-secondary border-0 text-center"
+                            value="1">
+                        <div class="input-group-btn">
+                            <button class="btn btn-primary btn-plus">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary px-3" id="add-to-cart-btn" data-product="{{ product.id }}">
+                        <i class="fa fa-shopping-cart mr-1"></i> Səbətə əlavə et
+                    </button>
+                </div>
+
+                <div class="d-flex pt-2">
+                    <strong class="text-dark mr-2">Paylaş:</strong>
+                    <div class="d-inline-flex">
+                        <a class="text-dark px-2" href=""><i class="fab fa-facebook-f"></i></a>
+                        <a class="text-dark px-2" href=""><i class="fab fa-twitter"></i></a>
+                        <a class="text-dark px-2" href=""><i class="fab fa-linkedin-in"></i></a>
+                        <a class="text-dark px-2" href=""><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row px-xl-5">
+        <div class="col">
+            <div class="bg-light p-30">
+                <div class="nav nav-tabs mb-4">
+                    <a class="nav-item nav-link text-dark active" data-toggle="tab" href="#tab-pane-1">Təsvir</a>
+                </div>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="tab-pane-1">
+                        <h4 class="mb-3">Məhsul təsviri</h4>
+                        <p>{{product.description}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid py-5">
+    <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4">
+        <span class="bg-secondary pr-3">Bunlar da xoşunuza gələ bilər</span>
+    </h2>
+    <div class="row px-xl-5">
+        <div class="col">
+            <div class="owl-carousel related-carousel">
+                {% for product in latest_products %}
+                <div class="product-item bg-light">
+                    <div class="product-img position-relative overflow-hidden">
+                        <img class="img-fluid w-100" src="{{product.image.url}}" alt="">
+                        <div class="product-action">
+                            <button class="btn btn-outline-dark btn-square" onclick="addBasket('{{product.id}}')">
+                                <i class="fa fa-shopping-cart"></i>
+                            </button>
+                            <a class="btn btn-outline-dark btn-square"
+                                href="{% url 'product:product_detail' product.slug %}">
+                                <i class="fa fa-search"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="text-center py-4">
+                        <a class="h6 text-decoration-none text-truncate" href="">{{product.title}}</a>
+                        <div class="d-flex align-items-center justify-content-center mt-2">
+                            <h5>₼{{ product.price }}</h5>
+                            {% if product.old_price %}
+                            <h6 class="text-muted ml-2"><del>₼{{ product.old_price }}</del></h6>
+                            {% endif %}
+                        </div>
+                        <div class="d-flex align-items-center justify-content-center mb-1">
+                            {% for i in "12345" %}
+                            <small class="fa fa-star text-primary mr-1"></small>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            const cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === name + "=") {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    document.querySelectorAll('.btn-plus').forEach(button => {
+        button.addEventListener('click', function () {
+            const input = this.closest('.quantity').querySelector('input');
+            let value = parseInt(input.value);
+            if (!isNaN(value)) {
+                input.value = value + 1;
+            }
+        });
+    });
+
+    document.querySelectorAll('.btn-minus').forEach(button => {
+        button.addEventListener('click', function () {
+            const input = this.closest('.quantity').querySelector('input');
+            let value = parseInt(input.value);
+            if (!isNaN(value) && value > 1) {
+                input.value = value - 1;
+            }
+        });
+    });
+
+    function showToast(message, bg = 'bg-danger') {
+        const toastId = `toast-${Date.now()}`;
+        const toastHTML = `
+        <div id="${toastId}" class="toast ${bg} text-white" role="alert" aria-live="assertive" aria-atomic="true"
+             data-delay="4000"
+             style="min-width: 300px; font-size: 1rem; padding: 1rem;">
+            <div class="toast-body d-flex justify-content-between align-items-center">
+                <span>${message}</span>
+                <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast" aria-label="Close" style="font-size: 1.3rem;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    `;
+        const container = document.getElementById("toast-container");
+        container.insertAdjacentHTML("beforeend", toastHTML);
+        $(`#${toastId}`).toast('show').on('hidden.bs.toast', function () {
+            this.remove();
+        });
+    }
+
+    document.getElementById("add-to-cart-btn").addEventListener("click", function () {
+        const quantity = document.getElementById("quantity-input").value;
+        const prodid = this.getAttribute("data-product");
+
+        const colorInputs = document.querySelectorAll('input[name="color"]');
+        const gridInputs = document.querySelectorAll('input[name="grid"]');
+
+        const colorInput = document.querySelector('input[name="color"]:checked');
+        const gridInput = document.querySelector('input[name="grid"]:checked');
+
+        const colorRequired = colorInputs.length > 0;
+        const gridRequired = gridInputs.length > 0;
+
+        if (colorRequired && !colorInput) {
+            showToast("Zəhmət olmasa, rəng seçin!", "bg-danger");
+            return;
+        }
+        if (gridRequired && !gridInput) {
+            showToast("Zəhmət olmasa, ölçü seçin!", "bg-danger");
+            return;
+        }
+
+        const colorid = colorInput ? colorInput.value : -1;
+        const gridid = gridInput ? gridInput.value : -1;
+
+        fetch(`/addbasket/${prodid}/${colorid}/${gridid}/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: `quantity=${quantity}`
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    showToast("Səbətə əlavə olundu!", "bg-success");
+                } else {
+                    showToast(data.message || "Səbətə əlavə edilərkən xəta baş verdi!", "bg-danger");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                showToast("Gözlənilməz xəta baş verdi!", "bg-danger");
+            });
+    });
+</script>
+{% endblock %}
