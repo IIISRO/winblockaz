@@ -90,12 +90,12 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 CSRF_TRUSTED_ORIGINS = [ 
-    "https://storeglasstech.az",
-    "https://www.storeglasstech.az",
+    "https://winblock.com.az",
+    "https://www.winblock.com.az",
     ]
 ALLOWED_ORIGINS = [ 
-    "https://storeglasstech.az",
-    "https://www.storeglasstech.az",
+    "https://winblock.com.az",
+    "https://www.winblock.com.az",
     ]
 
 CSRF_COOKIE_HTTPONLY = True
