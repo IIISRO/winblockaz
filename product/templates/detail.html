@@ -56,7 +56,7 @@
                 {% if grids %}
                 <div class="d-flex mb-4">
                     <strong class="text-dark mr-3">Ölçülər:</strong>
-                    <form>
+                    <form id="grid-form">
                         {% for grid in grids %}
                         <div class="custom-control custom-radio custom-control-inline">
                             <input type="radio" class="custom-control-input" id="grid-{{ grid.id }}" name="grid"
@@ -64,8 +64,21 @@
                             <label class="custom-control-label" for="grid-{{ grid.id }}">{{ grid.title }}</label>
                         </div>
                         {% endfor %}
+
+                        <!-- Custom ölçü seçimi -->
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" class="custom-control-input" id="grid-custom" name="grid"
+                                value="custom">
+                            <label class="custom-control-label" for="grid-custom">Ölçü əlavə et</label>
+                        </div>
                     </form>
+
                 </div>
+                 <div id="custom-size-inputs" style="display:none;align-items: center;gap: 10px; margin:20px 0;">
+                        <input type="number" id="custom-width" placeholder="En (sm)" min="1" class="form-control p-2" style="width: max-content;">
+                        <span><i class="fa fa-times"></i></span>
+                        <input type="number" id="custom-height" placeholder="Uzunluq (sm)" min="1"  class="form-control p-2" style="width: max-content;">
+                    </div>
                 {% endif %}
 
                 <div class="d-flex align-items-center mb-4 pt-2">
@@ -161,9 +174,9 @@
     </div>
 </div>
 {% endblock %}
-
 {% block js %}
 <script>
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== "") {
@@ -183,9 +196,7 @@
         button.addEventListener('click', function () {
             const input = this.closest('.quantity').querySelector('input');
             let value = parseInt(input.value);
-            if (!isNaN(value)) {
-                input.value = value + 1;
-            }
+            if (!isNaN(value)) input.value = value + 1;
         });
     });
 
@@ -193,26 +204,22 @@
         button.addEventListener('click', function () {
             const input = this.closest('.quantity').querySelector('input');
             let value = parseInt(input.value);
-            if (!isNaN(value) && value > 1) {
-                input.value = value - 1;
-            }
+            if (!isNaN(value) && value > 1) input.value = value - 1;
         });
     });
 
     function showToast(message, bg = 'bg-danger') {
         const toastId = `toast-${Date.now()}`;
         const toastHTML = `
-        <div id="${toastId}" class="toast ${bg} text-white" role="alert" aria-live="assertive" aria-atomic="true"
-             data-delay="4000"
-             style="min-width: 300px; font-size: 1rem; padding: 1rem;">
-            <div class="toast-body d-flex justify-content-between align-items-center">
-                <span>${message}</span>
-                <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast" aria-label="Close" style="font-size: 1.3rem;">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+            <div id="${toastId}" class="toast ${bg} text-white" role="alert" aria-live="assertive" aria-atomic="true" data-delay="4000" style="min-width:300px;font-size:1rem;padding:1rem;">
+                <div class="toast-body d-flex justify-content-between align-items-center">
+                    <span>${message}</span>
+                    <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast" aria-label="Close" style="font-size:1.3rem;">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
             </div>
-        </div>
-    `;
+        `;
         const container = document.getElementById("toast-container");
         container.insertAdjacentHTML("beforeend", toastHTML);
         $(`#${toastId}`).toast('show').on('hidden.bs.toast', function () {
@@ -220,26 +227,47 @@
         });
     }
 
+    document.querySelectorAll('input[name="grid"]').forEach(radio => {
+        radio.addEventListener('change', function () {
+            const customInputs = document.getElementById('custom-size-inputs');
+            if (this.value === 'custom') {
+                customInputs.style.display = 'flex';
+            } else {
+                customInputs.style.display = 'none';
+            }
+        });
+    });
+
     document.getElementById("add-to-cart-btn").addEventListener("click", function () {
         const quantity = document.getElementById("quantity-input").value;
         const prodid = this.getAttribute("data-product");
 
-        const colorInputs = document.querySelectorAll('input[name="color"]');
-        const gridInputs = document.querySelectorAll('input[name="grid"]');
-
         const colorInput = document.querySelector('input[name="color"]:checked');
         const gridInput = document.querySelector('input[name="grid"]:checked');
 
-        const colorRequired = colorInputs.length > 0;
-        const gridRequired = gridInputs.length > 0;
-
-        if (colorRequired && !colorInput) {
+        if (document.querySelectorAll('input[name="color"]').length > 0 && !colorInput) {
             showToast("Zəhmət olmasa, rəng seçin!", "bg-danger");
             return;
         }
-        if (gridRequired && !gridInput) {
+        if (document.querySelectorAll('input[name="grid"]').length > 0 && !gridInput) {
             showToast("Zəhmət olmasa, ölçü seçin!", "bg-danger");
             return;
+        }
+
+        let finalPrice = parseFloat("{{ product.price }}");
+
+
+        if (gridInput && gridInput.value === 'custom') {
+            const width = parseFloat(document.getElementById('custom-width').value);
+            const height = parseFloat(document.getElementById('custom-height').value);
+
+            if (isNaN(width) || isNaN(height) || width <= 0 || height <= 0) {
+                showToast("Zəhmət olmasa, düzgün ölçü daxil edin!", "bg-danger");
+                return;
+            }
+
+            const area = (width / 100) * (height / 100);
+            finalPrice = 100 * area;
         }
 
         const colorid = colorInput ? colorInput.value : -1;
@@ -248,12 +276,19 @@
         fetch(`/addbasket/${prodid}/${colorid}/${gridid}/`, {
             method: "POST",
             headers: {
-                "X-CSRFToken": getCookie("csrftoken"),
-                "Content-Type": "application/x-www-form-urlencoded"
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Accept": "application/json",
+                "Content-Type": "application/json"
             },
-            body: `quantity=${quantity}`
-        })
-            .then(response => response.json())
+            credentials: "same-origin",
+            body: JSON.stringify({
+                quantity: quantity,
+                price: finalPrice,
+                width: gridInput.value === "custom" ? document.getElementById('custom-width').value : null,
+                height: gridInput.value === "custom" ? document.getElementById('custom-height').value : null
+            })
+
+        }).then(response => response.json())
             .then(data => {
                 if (data.status === "success") {
                     showToast("Səbətə əlavə olundu!", "bg-success");

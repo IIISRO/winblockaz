@@ -35,7 +35,15 @@
                             <a style="color: black;"
                                 href="/shop/{{product.product.get_absolute_url}}">{{product.product}}</a>
                         </td>
-                        <td class="align-middle">{{product.product.price}} ₼</td>
+                        <td class="align-middle">
+                            {% if product.custom_price %}
+                            {{ product.custom_price }} ₼
+                            <br><small>{{ product.custom_width }} × {{ product.custom_height }} sm</small>
+                            {% else %}
+                            {{ product.product.price }} ₼
+                            {% endif %}
+                        </td>
+
                         <td class="align-middle">
                             <div class="input-group quantity mx-auto" style="width: 100px;">
                                 <div class="input-group-btn">

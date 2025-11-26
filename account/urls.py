@@ -9,8 +9,9 @@ urlpatterns = [
     path('login/', login_user, name='login'),
     path('cart/', cart, name='cart'),
 
-    re_path(r'^addbasket/(?P<prodid>-?\d+)/(?P<colorid>-?\d+)/(?P<gridid>-?\d+)/$', add_basket, name='addbasket'),
-    
+    # re_path(r'^addbasket/(?P<prodid>-?\d+)/(?P<colorid>-?\d+)/(?P<gridid>-?\d+)/$', add_basket, name='addbasket'),
+    re_path(r'^addbasket/(?P<prodid>\d+)/(?P<colorid>\d+)/(?P<gridid>[^/]+)/$', add_basket, name='addbasket'),
+
     path('update_basket/<int:id>/', update_basket, name='update_basket'),
     # path('profile/', Profile.as_view(), name='profile'),
     # path('register/', Signin.as_view(), name='signin'),

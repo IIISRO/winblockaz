@@ -82,41 +82,94 @@ def register(request):
     return render(request, 'register.html')
 
 
+# @login_required()
+# def add_basket(request, prodid, colorid, gridid):
+#     if request.method == "POST":
+#         try:
+#             quantity = 1
+#             basket, _ = Basket.objects.get_or_create(user=request.user)
+
+#             product = get_object_or_404(Product, id=prodid)
+
+#             color = None
+#             if str(colorid).isdigit() and int(colorid) >= 0:
+#                 color = Color.objects.filter(id=colorid).first()
+
+#             grid = None
+#             if str(gridid).isdigit() and int(gridid) >= 0:
+#                 grid = Grid.objects.filter(id=gridid).first()
+
+#             item, created = BasketItem.objects.get_or_create(
+#                 basket=basket,
+#                 product=product,
+#                 color=color,
+#                 grid=grid,
+#                 defaults={"quantity": quantity}
+#             )
+
+#             if not created:
+#                 item.quantity += quantity
+#                 item.save()
+
+#             return JsonResponse({'status': 'success', 'message': 'Əlavə olundu'}, status=200)
+
+#         except Exception as e:
+#             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+#     return JsonResponse({'status': 'error', 'message': 'Səhv sorğu metodu'}, status=405)
+
 @login_required()
 def add_basket(request, prodid, colorid, gridid):
     if request.method == "POST":
         try:
-            quantity = 1
-            basket, _ = Basket.objects.get_or_create(user=request.user)
+            data = json.loads(request.body.decode("utf-8"))
+            quantity = int(data.get("quantity", 1))
+            custom_price = data.get("price")
+            custom_width = data.get("width")
+            custom_height = data.get("height")
 
+            basket, _ = Basket.objects.get_or_create(user=request.user)
             product = get_object_or_404(Product, id=prodid)
 
             color = None
-            if str(colorid).isdigit() and int(colorid) >= 0:
+            if str(colorid).isdigit():
                 color = Color.objects.filter(id=colorid).first()
 
             grid = None
-            if str(gridid).isdigit() and int(gridid) >= 0:
+            is_custom = False
+
+            if gridid.isdigit():
                 grid = Grid.objects.filter(id=gridid).first()
+            elif gridid == "custom":
+                is_custom = True
+                grid = None
 
             item, created = BasketItem.objects.get_or_create(
                 basket=basket,
                 product=product,
                 color=color,
                 grid=grid,
-                defaults={"quantity": quantity}
+                defaults={
+                    "quantity": quantity,
+                }
             )
 
             if not created:
                 item.quantity += quantity
-                item.save()
 
-            return JsonResponse({'status': 'success', 'message': 'Əlavə olundu'}, status=200)
+            if is_custom:
+                item.custom_price = float(custom_price)
+                item.custom_width = float(custom_width)
+                item.custom_height = float(custom_height)
+
+            item.save()
+
+            return JsonResponse({'status': 'success'}, status=200)
 
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
-    return JsonResponse({'status': 'error', 'message': 'Səhv sorğu metodu'}, status=405)
+    return JsonResponse({'status': 'error', 'message': 'Invalid method'}, status=405)
 
 
 @login_required()
