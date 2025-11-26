@@ -158,19 +158,27 @@
 {% block js %}
 <script>
     const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
     function addBasket(prodID) {
-        var url = "{% url 'account:addbasket' prodid=0 colorid=-1 gridid=-1 %}".replace('0', prodID)
+        var url = "/addbasket/" + prodID + "/0/0/";
+
         fetch(url, {
             method: "POST",
             headers: {
-                "X-CSRFToken": "{{csrf_token}}",
-                "Accept": "application/json",
-                'Content-Type': 'application/json'
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json",
             },
+            body: JSON.stringify({
+                quantity: 1,
+                price: null,
+                width: null,
+                height: null
+            })
         })
-            .finally(() => {
-                window.location = window.location;
-            });
+        .then(r => r.json())
+        .finally(() => {
+            window.location.reload();
+        });
     }
 </script>
 {% endblock %}
