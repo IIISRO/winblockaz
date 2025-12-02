@@ -74,11 +74,13 @@
                     </form>
 
                 </div>
-                 <div id="custom-size-inputs" style="display:none;align-items: center;gap: 10px; margin:20px 0;">
-                        <input type="number" id="custom-width" placeholder="En (sm)" min="1" class="form-control p-2" style="width: max-content;">
-                        <span><i class="fa fa-times"></i></span>
-                        <input type="number" id="custom-height" placeholder="Uzunluq (sm)" min="1"  class="form-control p-2" style="width: max-content;">
-                    </div>
+                <div id="custom-size-inputs" style="display:none;align-items: center;gap: 10px; margin:20px 0;">
+                    <input type="number" id="custom-width" placeholder="En (sm)" min="1" class="form-control p-2"
+                        style="width: max-content;">
+                    <span><i class="fa fa-times"></i></span>
+                    <input type="number" id="custom-height" placeholder="Uzunluq (sm)" min="1" class="form-control p-2"
+                        style="width: max-content;">
+                </div>
                 {% endif %}
 
                 <div class="d-flex align-items-center mb-4 pt-2">
@@ -302,4 +304,26 @@
             });
     });
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": "{{ product.title }}",
+  "image": "{{ product.image.url }}",
+  "description": "{{ product.description|escapejs }}",
+  "sku": "{{ product.id }}",
+  "brand": {
+    "@type": "Brand",
+    "name": "WinBlock"
+  },
+  "offers": {
+    "@type": "Offer",
+    "url": "{{ request.build_absolute_uri }}",
+    "price": "{{ product.price }}",
+    "priceCurrency": "AZN",
+    "availability": "{% if product.stock > 0 %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}"
+  }
+}
+</script>
+
 {% endblock %}
