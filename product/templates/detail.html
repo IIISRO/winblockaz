@@ -74,13 +74,11 @@
                     </form>
 
                 </div>
-                <div id="custom-size-inputs" style="display:none;align-items: center;gap: 10px; margin:20px 0;">
-                    <input type="number" id="custom-width" placeholder="En (sm)" min="1" class="form-control p-2"
-                        style="width: max-content;">
-                    <span><i class="fa fa-times"></i></span>
-                    <input type="number" id="custom-height" placeholder="Uzunluq (sm)" min="1" class="form-control p-2"
-                        style="width: max-content;">
-                </div>
+                 <div id="custom-size-inputs" style="display:none;align-items: center;gap: 10px; margin:20px 0;">
+                        <input type="number" id="custom-width" placeholder="En (sm)" min="1" class="form-control p-2" style="width: max-content;">
+                        <span><i class="fa fa-times"></i></span>
+                        <input type="number" id="custom-height" placeholder="Uzunluq (sm)" min="1"  class="form-control p-2" style="width: max-content;">
+                    </div>
                 {% endif %}
 
                 <div class="d-flex align-items-center mb-4 pt-2">
@@ -309,9 +307,31 @@
   "@context": "https://schema.org/",
   "@type": "Product",
   "name": "{{ product.title|escapejs }}",
-  "image": "{{ request.build_absolute_uri(product.image.url) }}",
   "description": "{{ product.description|escapejs }}",
-  "sku": "{{ product.id }}",
+  "image": "{{ request.build_absolute_uri(product.image.url) }}",
+  "material": "Paslanmayan metal",
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Yük testi",
+      "value": "İstanbul Texniki Universitetində 250 kq"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Quraşdırma",
+      "value": "Pəncərə üçün ölçü almağa ehtiyac yoxdur, yerində yığılır"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Balkon",
+      "value": "Xüsusi ölçü götürülərək mükəmməl uyğunluq təmin olunur"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Dayanıqlıq",
+      "value": "Günəşdə solmur, yağış və küləkdən zərər görmür"
+    }
+  ],
   "brand": {
     "@type": "Brand",
     "name": "WinBlock"
@@ -319,11 +339,10 @@
   "offers": {
     "@type": "Offer",
     "url": "{{ request.build_absolute_uri }}",
-    "price": {{ product.price|floatformat:2 }},
     "priceCurrency": "AZN",
+    "price": {{ product.price|floatformat:2 }},
     "availability": "{% if product.stock > 0 %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}"
   }
 }
 </script>
-
 {% endblock %}
