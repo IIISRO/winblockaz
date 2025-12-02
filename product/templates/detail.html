@@ -308,8 +308,8 @@
 {
   "@context": "https://schema.org/",
   "@type": "Product",
-  "name": "{{ product.title }}",
-  "image": "{{ product.image.url }}",
+  "name": "{{ product.title|escapejs }}",
+  "image": "{{ request.build_absolute_uri(product.image.url) }}",
   "description": "{{ product.description|escapejs }}",
   "sku": "{{ product.id }}",
   "brand": {
@@ -319,7 +319,7 @@
   "offers": {
     "@type": "Offer",
     "url": "{{ request.build_absolute_uri }}",
-    "price": "{{ product.price }}",
+    "price": {{ product.price|floatformat:2 }},
     "priceCurrency": "AZN",
     "availability": "{% if product.stock > 0 %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}"
   }
