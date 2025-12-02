@@ -340,9 +340,11 @@
     "@type": "Offer",
     "url": "{{ request.build_absolute_uri }}",
     "priceCurrency": "AZN",
-    "price": {{ product.price|floatformat:2 }},
-    "availability": "{% if product.stock > 0 %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}"
+    "price": "{{ product.price|floatformat:2|default:'0.00' }}",
+    "availability": "{% if product.stock > 0 %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+    "itemCondition": "https://schema.org/NewCondition"
   }
 }
 </script>
+
 {% endblock %}
