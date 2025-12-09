@@ -9714,6 +9714,6 @@ a.text-dark:hover, a.text-dark:focus {
 }
 @media (min-width: 992px) {
     .navbar-expand-lg .navbar-toggler,.logo-mobile {
-        display: none;
+        display: none !important;
     }
 }
