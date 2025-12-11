@@ -308,7 +308,7 @@
   "@type": "Product",
   "name": "{{ product.title|escapejs }}",
   "description": "{{ product.description|escapejs }}",
-  "image": "{{ request.build_absolute_uri(product.image.url) }}",
+  "image": "{{ request.build_absolute_uri }}{{ product.image.url }}",
   "material": "Paslanmayan metal",
   "additionalProperty": [
     {
