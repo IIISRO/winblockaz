@@ -80,8 +80,9 @@
                         <div class="row">
                             <div class="col">
                                 <div data-mdb-input-init class="form-outline">
-                                    <input required type="tel" placeholder="+7(___) ___-__-__" maxlength="18" id="phone"
-                                        class="form-control form-control-lg" />
+                                    <input required type="tel" placeholder="+994 (__) ___-__-__" maxlength="19"
+                                        id="phone" class="form-control form-control-lg" />
+
                                     <label class="form-label" for="phone">Telefon nömrəsi</label>
                                 </div>
                             </div>
@@ -90,14 +91,16 @@
                         <div class="row">
                             <div class="col-md-6 mb-4">
                                 <div data-mdb-input-init class="form-outline">
-                                    <input required type="password" style="font-size: 14px !important;" placeholder="Minimum: 8 simvol" id="pass"
+                                    <input required type="password" style="font-size: 14px !important;"
+                                        placeholder="Minimum: 8 simvol" id="pass"
                                         class="form-control form-control-lg" />
                                     <label class="form-label" for="pass">Şifrə</label>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-4">
                                 <div data-mdb-input-init class="form-outline">
-                                    <input required type="password" style="font-size: 14px !important;" placeholder="Minimum: 8 simvol" id="rPass"
+                                    <input required type="password" style="font-size: 14px !important;"
+                                        placeholder="Minimum: 8 simvol" id="rPass"
                                         class="form-control form-control-lg" />
                                     <label class="form-label" for="rPass">Şifrəni təkrar daxil edin</label>
                                 </div>
@@ -222,7 +225,7 @@
 
             var digits = val.replace(/\D/g, '').replace(/^994/, '');
 
-            digits = digits.substring(0, 9); // Azərbaycanda mobil nömrə 9 rəqəmdir (xx xxx xx xx)
+            digits = digits.substring(0, 9);
 
             var formatted = '+994 ';
             if (digits.length > 0) formatted += '(' + digits.substring(0, 2);
