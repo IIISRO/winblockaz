@@ -64,7 +64,7 @@ def register(request):
 
         if not User.objects.filter(email=email).exists():
             user = User.objects.create(
-                username=number.replace('+7', '').replace(' ', ''),
+                username=number.replace('+994', '').replace(' ', ''),
                 first_name=first_name,
                 last_name=last_name,
                 email=email,
